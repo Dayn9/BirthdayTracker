@@ -1,0 +1,26 @@
+{
+  "name": "birthdaytracker",
+  "version": "1.0.0",
+  "description": "Project 1 for IGME 430",
+  "main": ".src/server.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Tests complete\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dayn9/BirthdayTracker.git"
+  },
+  "author": "Dane Sherman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dayn9/BirthdayTracker/issues"
+  },
+  "homepage": "https://github.com/Dayn9/BirthdayTracker#readme",
+  "devDependencies": {
+    "eslint": "^7.10.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.22.0"
+  }
+}
