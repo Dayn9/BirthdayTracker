@@ -2,11 +2,12 @@
   "name": "birthdaytracker",
   "version": "1.0.0",
   "description": "Project 1 for IGME 430",
-  "main": ".src/server.js",
+  "main": "./src/server.js",
   "scripts": {
     "start": "node ./src/server.js",
     "pretest": "eslint ./src --fix",
-    "test": "echo \"Tests complete\""
+    "test": "echo \"Tests complete\"",
+    "nodemon": "nodemon --watch ./src ./server.js"
   },
   "repository": {
     "type": "git",
