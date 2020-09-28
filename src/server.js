@@ -10,22 +10,30 @@ const urlStruct = {
   GET: {
     '/': htmlHandler.getIndex,
     '/style.css': htmlHandler.getStyle,
-    '/getUsers': jsonHandler.getUsers,
-    '/updateUsers': jsonHandler.updateUsers,
+    '/getUser': jsonHandler.getUser,
     '/notFound': jsonHandler.notFound,
   },
   HEAD: {
-    '/getUsers': jsonHandler.getUsersMeta,
-    '/updateUsers': jsonHandler.updateUsersMeta,
+    '/getUser': jsonHandler.getUserMeta,
     '/notFound': jsonHandler.notFoundMeta,
   },
+  POST: {
+    '/addUser': jsonHandler.addUser,
+    '/addBirthday': jsonHandler.addUser,
+  }
 };
 
 const onRequest = (request, response) => {
+  
+  
   // get the URL data
   const parsedUrl = url.parse(request.url);
+  console.log(parsedUrl);
 
-  console.log(`${request.method} ${parsedUrl.pathname}`);
+  // get the queries
+  const params = query.parse(parsedUrl.query);
+
+  console.log(`${request.method} ${parsedUrl.pathname} ${params.name}`);
 
   if (request.method === 'POST') {
     const body = [];
@@ -41,12 +49,12 @@ const onRequest = (request, response) => {
 
     request.on('end', () => {
       const bodyStr = Buffer.concat(body).toString();
-      const params = query.parse(bodyStr);
+      params = query.parse(bodyStr);
 
-      jsonHandler.addUser(request, response, params);
+      urlStruct['POST'][parsedUrl.pathname](request, response, params);
     });
   } else if (urlStruct[request.method][parsedUrl.pathname]) {
-    urlStruct[request.method][parsedUrl.pathname](request, response);
+    urlStruct[request.method][parsedUrl.pathname](request, response, params);
   } else {
     urlStruct[request.method]['/notFound'](request, response);
   }

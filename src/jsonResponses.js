@@ -1,4 +1,5 @@
 const users = {};
+
 const respondJSON = (req, res, status, object) => {
   const headers = {
     'Content-Type': 'application/json',
@@ -16,12 +17,12 @@ const respondJSONMeta = (req, res, status) => {
   res.end();
 };
 
-const getUsers = (req, res) => {
+const getUser = (req, res) => {
   const json = { users };
   return respondJSON(req, res, 200, json);
 };
 
-const getUsersMeta = (req, res) => respondJSONMeta(req, res, 200);
+const getUserMeta = (req, res) => respondJSONMeta(req, res, 200);
 
 const updateUsers = (req, res) => {
   const newUser = {
@@ -48,23 +49,22 @@ const addUser = (req, res, body) => {
   };
 
   // check for name and age params
-  if (!body.name || !body.age) {
+  if (!body.username) {
     json.id = 'missingParams';
     return respondJSON(req, res, 400, json);
   }
 
   let responseCode = 201; // created
 
-  if (users[body.name]) {
+  if (users[body.username]) {
     responseCode = 204; // updated
     json.message = '';
   } else {
-    users[body.name] = {};
+    users[body.username] = {};
     json.message = 'Created Successfully';
   }
 
-  users[body.name].name = body.name;
-  users[body.name].age = body.age;
+  users[body.username].username = body.username;
 
   if (responseCode === 201) {
     return respondJSON(req, res, responseCode, json);
@@ -74,8 +74,8 @@ const addUser = (req, res, body) => {
 const addUserMeta = (req, res) => respondJSON(req, res, 200);
 
 module.exports = {
-  getUsers,
-  getUsersMeta,
+  getUser,
+  getUserMeta,
   updateUsers,
   updateUsersMeta,
   notFound,

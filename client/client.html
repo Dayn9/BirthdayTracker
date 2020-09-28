@@ -5,8 +5,11 @@
   <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
-  <script type="text/babel">
-    const handleResponse = (xhr, parseResponse) =>{
+  <script type="text/babel" >
+
+    const username = "";
+
+    const handleResponse = (xhr) =>{
         const content = document.querySelector('#content');
 
         switch(xhr.status){
@@ -18,69 +21,96 @@
             case 404: content.innerHTML = "<b>Not Found</b>"; break;
         }
 
-        if(parseResponse){
           const jsonObj = JSON.parse(xhr.response);
-          console.dir(jsonObj);
-          let message; 
-          content.innerHTML += `<p>${message}</p>`;
-        }else{
-          content.innerHTML += `<p>Metadata received </p>`;
-        }
+          //console.dir(jsonObj);
+          content.innerHTML += `<p>${jsonObj.message}</p>`;
     };
 
     const requestUpdate = (e, userForm) => {
+      e.preventDefault(); //Don't fire default event
       const url = userForm.querySelector('#urlField').value;
-      const method = userForm.querySelector('#methodSelect').value;
+      const getUsername = userForm.querySelector('#getUsername').value;
 
       const xhr = new XMLHttpRequest();
-      xhr.open(method, url);
+      xhr.open('GET', url + `?name=${username}`);
 
       xhr.setRequestHeader('Accept', 'application/json');
 
-      if(method === 'get'){
-        xhr.onload = () => handleResponse(xhr, true);
-      }else{
-        xhr.onload = () => handleResponse(xhr, false);
-      }
+      xhr.onload = () => handleResponse(xhr, true);
 
       xhr.send();
-
-      e.preventDefault(); //Don't fire default event
+      
       return false; //Prevent bubbling
     };
 
-    const sendPost = (e, nameForm) => {
+    const sendUserPost = (e, nameForm) => {
       e.preventDefault(); //Don't fire default event
 
       const nameAction = nameForm.getAttribute('action');
       const nameMethod = nameForm.getAttribute('method');
      
-      const nameField = nameForm.querySelector('#nameField');
-      const ageField = nameForm.querySelector('#ageField');
+      const createUsername = nameForm.querySelector('#createUsername');
+      const formData = `username=${createUsername.value}`
 
+      //create and send XHR request
       const xhr = new XMLHttpRequest();
       xhr.open(nameMethod, nameAction);
-
       xhr.setRequestHeader('Accept', 'application/json');
       xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
       xhr.onload = () => handleResponse(xhr, true);
+      xhr.send(formData);
 
-      const formData = `name=${nameField.value}&age=${ageField.value}`
+      return false;
+    }
+
+    const sendBirthdayPost = (e, nameForm) => {
+      e.preventDefault(); //Don't fire default event
+
+      const nameAction = nameForm.getAttribute('action');
+      const nameMethod = nameForm.getAttribute('method');
+     
+      const birthdayName = nameForm.querySelector('#birthdayName');
+      const birthday = nameForm.querySelector('#birthday');
+      console.log(birthday.value);
+      const formData = `name=${birthdayName.value}&age=${birthday.value}`
+
+      //create and send XHR request
+      const xhr = new XMLHttpRequest();
+      xhr.open(nameMethod, nameAction);
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      xhr.onload = () => handleResponse(xhr, true);
       xhr.send(formData);
 
       return false;
     }
 
     const init = () =>{
-      //setup userForm submit action
-      const userForm = document.querySelector('#userForm');
-      const getUsers = (e) => requestUpdate(e, userForm);
-      userForm.addEventListener('submit', getUsers);
-      //setup nameForm submit action
-      const nameForm = document.querySelector('#nameForm');
-      const addUser = (e) => sendPost(e, nameForm);
-      nameForm.addEventListener('submit', addUser);
+      //setup getUserForm submit action
+      const getUserForm = document.querySelector('#getUserForm');
+      const getUser = (e) => requestUpdate(e, getUserForm);
+      getUserForm.addEventListener('submit', getUser);
+
+      //setup createUSerForm submit action
+      const createUserForm = document.querySelector('#createUserForm');
+      const createUser = (e) => sendUserPost(e, createUserForm);
+      createUserForm.addEventListener('submit', createUser);
+
+      //setup birthdayForm submit action
+      const birthdayForm = document.querySelector('#birthdayForm');
+      const createBirthday = (e) => sendBirthdayPost(e, birthdayForm);
+      birthdayForm.addEventListener('submit', createBirthday);
+
+      const loginSection = document.querySelector('#loginSection');
+      const birthdaysSection = document.querySelector('#birthdaysSection');
+      birthdaysSection.style.display = "none";
+      const switchFunction = (e) => {
+        console.log('triggered');
+        birthdaysSection.style.display = "block";
+        loginSection.style.display = "none";
+      };
+      getUserForm.addEventListener('submit',  switchFunction);
+      createUserForm.addEventListener('submit', switchFunction);
     }
 
     window.onload = init;
@@ -93,7 +123,7 @@
 
     <div id = "loginSection">
       <h3> Search for existing account </h3>
-      <form id="getUserForm" action="/getUser?findUser=" method="get">
+      <form id="getUserForm" action="/getUser'" method="get">
         <label for="getUsername"> Username </label>
         <input id="getUsername" type="text" name="name" placeholder="Enter Username"/>
         <input type="submit" value="Search" />
