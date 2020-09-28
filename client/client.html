@@ -29,7 +29,8 @@
     const requestUpdate = (e, userForm) => {
       e.preventDefault(); //Don't fire default event
       const url = userForm.querySelector('#urlField').value;
-      const getUsername = userForm.querySelector('#getUsername').value;
+      username = userForm.querySelector('#getUsername').value;
+
 
       const xhr = new XMLHttpRequest();
       xhr.open('GET', url + `?name=${username}`);
@@ -52,6 +53,8 @@
       const createUsername = nameForm.querySelector('#createUsername');
       const formData = `username=${createUsername.value}`
 
+      username = createUsername.value;
+
       //create and send XHR request
       const xhr = new XMLHttpRequest();
       xhr.open(nameMethod, nameAction);
@@ -72,7 +75,7 @@
       const birthdayName = nameForm.querySelector('#birthdayName');
       const birthday = nameForm.querySelector('#birthday');
       console.log(birthday.value);
-      const formData = `name=${birthdayName.value}&age=${birthday.value}`
+      const formData = `username=${username}&name=${birthdayName.value}&birthday=${birthday.value}`
 
       //create and send XHR request
       const xhr = new XMLHttpRequest();

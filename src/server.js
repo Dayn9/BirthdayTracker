@@ -15,23 +15,22 @@ const urlStruct = {
   },
   HEAD: {
     '/getUser': jsonHandler.getUserMeta,
+    '/addBirthday': jsonHandler.addBirthdayMeta,
     '/notFound': jsonHandler.notFoundMeta,
   },
   POST: {
     '/addUser': jsonHandler.addUser,
-    '/addBirthday': jsonHandler.addUser,
-  }
+    '/addBirthday': jsonHandler.addBirthday,
+  },
 };
 
 const onRequest = (request, response) => {
-  
-  
   // get the URL data
   const parsedUrl = url.parse(request.url);
   console.log(parsedUrl);
 
   // get the queries
-  const params = query.parse(parsedUrl.query);
+  let params = query.parse(parsedUrl.query);
 
   console.log(`${request.method} ${parsedUrl.pathname} ${params.name}`);
 
@@ -51,7 +50,7 @@ const onRequest = (request, response) => {
       const bodyStr = Buffer.concat(body).toString();
       params = query.parse(bodyStr);
 
-      urlStruct['POST'][parsedUrl.pathname](request, response, params);
+      urlStruct.POST[parsedUrl.pathname](request, response, params);
     });
   } else if (urlStruct[request.method][parsedUrl.pathname]) {
     urlStruct[request.method][parsedUrl.pathname](request, response, params);

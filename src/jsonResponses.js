@@ -17,23 +17,6 @@ const respondJSONMeta = (req, res, status) => {
   res.end();
 };
 
-const getUser = (req, res) => {
-  const json = { users };
-  return respondJSON(req, res, 200, json);
-};
-
-const getUserMeta = (req, res) => respondJSONMeta(req, res, 200);
-
-const updateUsers = (req, res) => {
-  const newUser = {
-    createdAt: Date.now(),
-  };
-  users[newUser.createdAt] = newUser;
-  return respondJSON(req, res, 201, newUser);
-};
-
-const updateUsersMeta = (req, res) => respondJSONMeta(req, res, 200);
-
 const notFound = (req, res) => {
   const json = {
     message: 'The page you are looking for was not found',
@@ -43,9 +26,30 @@ const notFound = (req, res) => {
 };
 const notFoundMeta = (req, res) => respondJSONMeta(req, res, 404);
 
+const getUser = (req, res, params) => {
+  let json = {
+    message: 'Username required',
+  };
+
+  // check for name and age params
+  if (!params.name) {
+    json.id = 'missingParams';
+    return respondJSON(req, res, 400, json);
+  }
+
+  if (!users[params.name]) {
+    return notFound(req, res);
+  }
+  json = users[params.name]; // get the user profile
+
+  return respondJSON(req, res, 200, json);
+};
+
+const getUserMeta = (req, res) => respondJSONMeta(req, res, 200);
+
 const addUser = (req, res, body) => {
   const json = {
-    message: 'Name and age are both required',
+    message: 'Username required',
   };
 
   // check for name and age params
@@ -60,11 +64,11 @@ const addUser = (req, res, body) => {
     responseCode = 204; // updated
     json.message = '';
   } else {
-    users[body.username] = {};
     json.message = 'Created Successfully';
   }
 
   users[body.username].username = body.username;
+  users[body.username].birthdays = {};
 
   if (responseCode === 201) {
     return respondJSON(req, res, responseCode, json);
@@ -73,13 +77,38 @@ const addUser = (req, res, body) => {
 };
 const addUserMeta = (req, res) => respondJSON(req, res, 200);
 
+const addBirthday = (req, res, body) => {
+  let json = {
+    message: 'Username required',
+  };
+
+  // check for name and birthday params
+  if (!body.username || !body.birthday || !body.name) {
+    json.id = 'missingParams';
+    return respondJSON(req, res, 400, json);
+  }
+
+  // check if the username exists
+  if (!users[body.username]) {
+    return notFound(req, res);
+  }
+
+  // add or update the birthday
+  users[body.username].birthdays[body.name].name = body.name;
+  users[body.username].birthdays[body.name].birthday = body.birthday;
+
+  json = users[body.username];
+  return respondJSON(req, res, 201, json);
+};
+const addBirthdayMeta = (req, res) => respondJSON(req, res, 200);
+
 module.exports = {
   getUser,
   getUserMeta,
-  updateUsers,
-  updateUsersMeta,
   notFound,
   notFoundMeta,
+  addBirthday,
+  addBirthdayMeta,
   addUser,
   addUserMeta,
 };
