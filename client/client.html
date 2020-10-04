@@ -7,7 +7,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel" >
 
-    const username = "";
+    let username = "";
+
+    const loginSection = document.querySelector('#loginSection');
+    const birthdaysSection = document.querySelector('#birthdaysSection');
+    const usernameDisplay = document.querySelector('#usernameDisplay');
+
+    function hide (element) { element.style.display = "none"; }
+    function show(element) { element.style.display = "block"; }
 
     const handleResponse = (xhr) =>{
         const content = document.querySelector('#content');
@@ -22,23 +29,28 @@
         }
 
           const jsonObj = JSON.parse(xhr.response);
-          //console.dir(jsonObj);
+          console.dir(jsonObj);
           content.innerHTML += `<p>${jsonObj.message}</p>`;
+
+          if(jsonObj.user && jsonObj.user.username){
+            
+            username = jsonObj.user.username; //local username
+            usernameDisplay.innerHTML = username; //show the username
+
+            show(birthdaysSection);
+            hide(loginSection);
+          }
     };
 
     const requestUpdate = (e, userForm) => {
       e.preventDefault(); //Don't fire default event
       const url = userForm.querySelector('#urlField').value;
-      username = userForm.querySelector('#getUsername').value;
-
+      getUsername = userForm.querySelector('#getUsername').value;
 
       const xhr = new XMLHttpRequest();
-      xhr.open('GET', url + `?name=${username}`);
-
+      xhr.open('GET', url + `?username=${getUsername.value}`);
       xhr.setRequestHeader('Accept', 'application/json');
-
       xhr.onload = () => handleResponse(xhr, true);
-
       xhr.send();
       
       return false; //Prevent bubbling
@@ -52,8 +64,6 @@
      
       const createUsername = nameForm.querySelector('#createUsername');
       const formData = `username=${createUsername.value}`
-
-      username = createUsername.value;
 
       //create and send XHR request
       const xhr = new XMLHttpRequest();
@@ -90,10 +100,11 @@
 
     const init = () =>{
       //setup getUserForm submit action
+      /*
       const getUserForm = document.querySelector('#getUserForm');
       const getUser = (e) => requestUpdate(e, getUserForm);
       getUserForm.addEventListener('submit', getUser);
-
+      */
       //setup createUSerForm submit action
       const createUserForm = document.querySelector('#createUserForm');
       const createUser = (e) => sendUserPost(e, createUserForm);
@@ -104,16 +115,7 @@
       const createBirthday = (e) => sendBirthdayPost(e, birthdayForm);
       birthdayForm.addEventListener('submit', createBirthday);
 
-      const loginSection = document.querySelector('#loginSection');
-      const birthdaysSection = document.querySelector('#birthdaysSection');
-      birthdaysSection.style.display = "none";
-      const switchFunction = (e) => {
-        console.log('triggered');
-        birthdaysSection.style.display = "block";
-        loginSection.style.display = "none";
-      };
-      getUserForm.addEventListener('submit',  switchFunction);
-      createUserForm.addEventListener('submit', switchFunction);
+      hide(birthdaysSection);
     }
 
     window.onload = init;
@@ -124,24 +126,29 @@
 
     <h1>Birthday Tracker</h1>
 
+    <section id="content">
+    </section>
+
     <div id = "loginSection">
+      <!-- Now included in create user form function
       <h3> Search for existing account </h3>
       <form id="getUserForm" action="/getUser'" method="get">
         <label for="getUsername"> Username </label>
-        <input id="getUsername" type="text" name="name" placeholder="Enter Username"/>
+        <input id="getUsername" type="text" name="username" placeholder="Enter Username"/>
         <input type="submit" value="Search" />
       </form>
+      -->
 
-      <h3> Or Create a new one</h3>
+      <h3> Search or Create User</h3>
       <form id="createUserForm" action="/addUser" method="post">
         <label for="createUsername"> Username </label>
-        <input id="createUsername" type="text" name="name" placeholder="Enter Username"/>
-        <input type="submit" value="Create" />
+        <input id="createUsername" type="text" name="username" placeholder="Enter Username"/>
+        <input type="submit" value="Search" />
       </form>
     </div>
 
-    <div id = "birthdaysSection">
-      <h2 id = "username"> Username </h2>
+    <div id = "birthdaysSection" style = "display: none;">
+      <h2 id = "usernameDisplay"> Username </h2>
       <hr>
       <h3>New Birthday</h3>
       <form id="birthdayForm" action="/addBirthday" method="post">
@@ -158,8 +165,6 @@
 
       </ul>
     </div>
-  </section>
-  <section id="content">
   </section>
 </body>
 </html>

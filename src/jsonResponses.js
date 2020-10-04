@@ -31,16 +31,20 @@ const getUser = (req, res, params) => {
     message: 'Username required',
   };
 
+  console.dir(params);
+
   // check for name and age params
-  if (!params.name) {
+  if (!params.username) {
     json.id = 'missingParams';
     return respondJSON(req, res, 400, json);
   }
-
-  if (!users[params.name]) {
+  
+  if (!users[params.username]) {
     return notFound(req, res);
   }
-  json = users[params.name]; // get the user profile
+  
+  json.message = 'User Found';
+  json.user = users[params.username]; // get the user profile
 
   return respondJSON(req, res, 200, json);
 };
@@ -58,22 +62,22 @@ const addUser = (req, res, body) => {
     return respondJSON(req, res, 400, json);
   }
 
-  let responseCode = 201; // created
-
+  //check if the user already exists 
   if (users[body.username]) {
-    responseCode = 204; // updated
-    json.message = '';
-  } else {
-    json.message = 'Created Successfully';
-  }
+    return getUser(req, res, body); //get the user
+  } 
 
+  //make the new user
+  users[body.username] = {};
   users[body.username].username = body.username;
   users[body.username].birthdays = {};
+  
+  //update json with new user information
+  json.message = 'Created Successfully';
+  json.user = users[body.username];
 
-  if (responseCode === 201) {
-    return respondJSON(req, res, responseCode, json);
-  }
-  return respondJSONMeta(req, res, responseCode);
+  //send back the JSON with 201 created
+  return respondJSON(req, res, 201, json);
 };
 const addUserMeta = (req, res) => respondJSON(req, res, 200);
 
