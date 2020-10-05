@@ -82,13 +82,14 @@ const addUser = (req, res, body) => {
 const addUserMeta = (req, res) => respondJSON(req, res, 200);
 
 const addBirthday = (req, res, body) => {
-  let json = {
-    message: 'Username required',
-  };
+  let json = {};
+
+  console.dir(body);
 
   // check for name and birthday params
   if (!body.username || !body.birthday || !body.name) {
     json.id = 'missingParams';
+    json.message = "Username, birthday, and name are ALL required"
     return respondJSON(req, res, 400, json);
   }
 
@@ -98,10 +99,22 @@ const addBirthday = (req, res, body) => {
   }
 
   // add or update the birthday
+  if(users[body.username].birthdays[body.name]){
+    users[body.username].birthdays[body.name].birthday = body.birthday;
+    json.id = 'updated';
+    json.message = "Birthday updated";
+    json.user = users[body.username];
+    return respondJSON(req, res, 204, json); //send back updated JSON
+  }
+
+  //add the new birthday
+  users[body.username].birthdays[body.name] = {};
   users[body.username].birthdays[body.name].name = body.name;
   users[body.username].birthdays[body.name].birthday = body.birthday;
 
-  json = users[body.username];
+  json.id = 'created';
+  json.message = "Created Successfully";
+  json.user = users[body.username];
   return respondJSON(req, res, 201, json);
 };
 const addBirthdayMeta = (req, res) => respondJSON(req, res, 200);

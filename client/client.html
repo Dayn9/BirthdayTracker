@@ -3,18 +3,36 @@
 <head>
   <title>Birthday Tracker</title>
   <link rel="stylesheet" type="text/css" href="/style.css">
+  <link rel="stylesheet" type="text/css" href="/skeleton.css">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel" >
 
     let username = "";
 
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
     const loginSection = document.querySelector('#loginSection');
     const birthdaysSection = document.querySelector('#birthdaysSection');
     const usernameDisplay = document.querySelector('#usernameDisplay');
+    const birthdayList = document.querySelector('#birthdayList');
 
     function hide (element) { element.style.display = "none"; }
     function show(element) { element.style.display = "block"; }
+
+
+    function displayBirthdays(user){
+      birthdayList.innerHTML = ""; //clear the list
+      for(const name in user.birthdays){
+        console.log(user.birthdays[name].name);
+        console.log(user.birthdays[name].birthday);
+        let d = new Date(user.birthdays[name].birthday);
+
+        let li = document.createElement("li");
+        li.innerHTML = `${user.birthdays[name].name}: ${months[d.getMonth()]} ${d.getDay()}`;
+        birthdayList.appendChild(li);
+      }
+    }
 
     const handleResponse = (xhr) =>{
         const content = document.querySelector('#content');
@@ -28,18 +46,28 @@
             case 404: content.innerHTML = "<b>Not Found</b>"; break;
         }
 
-          const jsonObj = JSON.parse(xhr.response);
-          console.dir(jsonObj);
+        if(xhr.status>=400){
+          content.style.border = "2px solid red";
+        }else{
+          content.style.border = "2px solid cyan";
+        }
+
+        const jsonObj = JSON.parse(xhr.response);
+        console.dir(jsonObj);
+
+        if(jsonObj.message){
           content.innerHTML += `<p>${jsonObj.message}</p>`;
+        }
 
-          if(jsonObj.user && jsonObj.user.username){
-            
-            username = jsonObj.user.username; //local username
-            usernameDisplay.innerHTML = username; //show the username
+        if(jsonObj.user && jsonObj.user.username){
+          
+          username = jsonObj.user.username; //local username
+          usernameDisplay.innerHTML = username; //show the username
 
-            show(birthdaysSection);
-            hide(loginSection);
-          }
+          show(birthdaysSection);
+          hide(loginSection);
+          displayBirthdays(jsonObj.user); //update the birthdays
+        }
     };
 
     const requestUpdate = (e, userForm) => {
@@ -84,8 +112,8 @@
      
       const birthdayName = nameForm.querySelector('#birthdayName');
       const birthday = nameForm.querySelector('#birthday');
-      console.log(birthday.value);
       const formData = `username=${username}&name=${birthdayName.value}&birthday=${birthday.value}`
+      console.log(formData);
 
       //create and send XHR request
       const xhr = new XMLHttpRequest();
@@ -126,8 +154,7 @@
 
     <h1>Birthday Tracker</h1>
 
-    <section id="content">
-    </section>
+    <h6 id="content"></h6>
 
     <div id = "loginSection">
       <!-- Now included in create user form function
@@ -152,7 +179,7 @@
       <hr>
       <h3>New Birthday</h3>
       <form id="birthdayForm" action="/addBirthday" method="post">
-        <label for="birthdayName"> Username </label>
+        <label for="birthdayName"> Name </label>
         <input id="birthdayName" type="text" name="name" placeholder="Enter Name"/>
         <br>
         <label for="birthday">Birthday</label>

@@ -14,8 +14,19 @@ html, body {
   font-size: 2em;
 }
 
+li{
+  border-bottom: 2px solid black;
+  padding: 5px;
+  list-style-type: none;
+  font-size: 1em;
+}
+
 #content {
-  font-size: 2em;
   text-align: center;
+  display: block;
+  margin: auto;
+  width: 200px;
+  padding: 5px;
+  border-radius: 5px;
   border: 2px solid red;
 }
