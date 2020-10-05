@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <title>Birthday Tracker</title>
-  <link rel="stylesheet" type="text/css" href="/style.css">
   <link rel="stylesheet" type="text/css" href="/skeleton.css">
+  <link rel="stylesheet" type="text/css" href="/style.css">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel" >
@@ -166,7 +166,7 @@
       </form>
       -->
 
-      <h3> Search or Create User</h3>
+      <h4> Search or Create User</h4>
       <form id="createUserForm" action="/addUser" method="post">
         <label for="createUsername"> Username </label>
         <input id="createUsername" type="text" name="username" placeholder="Enter Username"/>
@@ -177,17 +177,20 @@
     <div id = "birthdaysSection" style = "display: none;">
       <h2 id = "usernameDisplay"> Username </h2>
       <hr>
-      <h3>New Birthday</h3>
-      <form id="birthdayForm" action="/addBirthday" method="post">
-        <label for="birthdayName"> Name </label>
-        <input id="birthdayName" type="text" name="name" placeholder="Enter Name"/>
-        <br>
-        <label for="birthday">Birthday</label>
-        <input type="date" id="birthday" name="birthday"> 
-        <br>
-        <input type="submit" value="Add" />
-        <!--TODO: email and message input-->
-      </form>
+      <div id = "bZone">
+        <h4>New Birthday</h4>
+        <form id="birthdayForm" action="/addBirthday" method="post">
+          <label for="birthdayName"> Name </label>
+          <input id="birthdayName" type="text" name="name" placeholder="Enter Name"/>
+          <br>
+          <label for="birthday">Birthday</label>
+          <input type="date" id="birthday" name="birthday"> 
+          <br>
+          <input type="submit" value="Add" />
+          <!--TODO: email and message input-->
+        </form>
+      </div>  
+      <h4>My Birthdays</h4>
       <ul id = "birthdayList">
 
       </ul>

@@ -4,28 +4,35 @@ html, body {
   margin: 0;
   padding: 0;
 }
+h4{
+  margin-top: 1em;
+}
 
 #top {
   text-align: center;
   margin: 0 auto;
 }
 
-#top h1 {
-  font-size: 2em;
-}
-
 li{
   border-bottom: 2px solid black;
   padding: 5px;
   list-style-type: none;
-  font-size: 1em;
+  font-size: 1.5em;
+}
+
+#bZone{
+  margin: auto;
+  width: 50%;
+  padding: 5px;
+  border-radius: 5px;
+  border: 2px solid black;
 }
 
 #content {
   text-align: center;
   display: block;
   margin: auto;
-  width: 200px;
+  width: 50%;
   padding: 5px;
   border-radius: 5px;
   border: 2px solid red;

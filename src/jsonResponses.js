@@ -27,7 +27,7 @@ const notFound = (req, res) => {
 const notFoundMeta = (req, res) => respondJSONMeta(req, res, 404);
 
 const getUser = (req, res, params) => {
-  let json = {
+  const json = {
     message: 'Username required',
   };
 
@@ -38,11 +38,11 @@ const getUser = (req, res, params) => {
     json.id = 'missingParams';
     return respondJSON(req, res, 400, json);
   }
-  
+
   if (!users[params.username]) {
     return notFound(req, res);
   }
-  
+
   json.message = 'User Found';
   json.user = users[params.username]; // get the user profile
 
@@ -62,34 +62,34 @@ const addUser = (req, res, body) => {
     return respondJSON(req, res, 400, json);
   }
 
-  //check if the user already exists 
+  // check if the user already exists
   if (users[body.username]) {
-    return getUser(req, res, body); //get the user
-  } 
+    return getUser(req, res, body); // get the user
+  }
 
-  //make the new user
+  // make the new user
   users[body.username] = {};
   users[body.username].username = body.username;
   users[body.username].birthdays = {};
-  
-  //update json with new user information
+
+  // update json with new user information
   json.message = 'Created Successfully';
   json.user = users[body.username];
 
-  //send back the JSON with 201 created
+  // send back the JSON with 201 created
   return respondJSON(req, res, 201, json);
 };
 const addUserMeta = (req, res) => respondJSON(req, res, 200);
 
 const addBirthday = (req, res, body) => {
-  let json = {};
+  const json = {};
 
   console.dir(body);
 
   // check for name and birthday params
   if (!body.username || !body.birthday || !body.name) {
     json.id = 'missingParams';
-    json.message = "Username, birthday, and name are ALL required"
+    json.message = 'Username, birthday, and name are ALL required';
     return respondJSON(req, res, 400, json);
   }
 
@@ -99,21 +99,21 @@ const addBirthday = (req, res, body) => {
   }
 
   // add or update the birthday
-  if(users[body.username].birthdays[body.name]){
+  if (users[body.username].birthdays[body.name]) {
     users[body.username].birthdays[body.name].birthday = body.birthday;
     json.id = 'updated';
-    json.message = "Birthday updated";
+    json.message = 'Birthday updated';
     json.user = users[body.username];
-    return respondJSON(req, res, 204, json); //send back updated JSON
+    return respondJSON(req, res, 204, json); // send back updated JSON
   }
 
-  //add the new birthday
+  // add the new birthday
   users[body.username].birthdays[body.name] = {};
   users[body.username].birthdays[body.name].name = body.name;
   users[body.username].birthdays[body.name].birthday = body.birthday;
 
   json.id = 'created';
-  json.message = "Created Successfully";
+  json.message = 'Created Successfully';
   json.user = users[body.username];
   return respondJSON(req, res, 201, json);
 };
